@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85ea0b69608a6a54e930f2f8761924c1, type: 3}
+  m_Name: Ability Library
+  m_EditorClassIdentifier: 
+  books:
+  - Key: Racism
+    Index: 0
+    ManaCost: 1
+    AbilityType: 2
+    TargetType: 4
+    TargetCount: 1
+    Pages:
+    - strength: 1
+      statusEffect:
+        PopupList:
+        - None
+        - Sleep
+        Value: None
+  - Key: Racism+
+    Index: 1
+    ManaCost: 2
+    AbilityType: 2
+    TargetType: 6
+    TargetCount: 2
+    Pages:
+    - strength: 1
+      statusEffect:
+        PopupList:
+        - None
+        - Sleep
+        Value: None
+  - Key: Stab
+    Index: 2
+    ManaCost: 1
+    AbilityType: 2
+    TargetType: 1
+    TargetCount: 1
+    Pages:
+    - strength: 1
+      statusEffect:
+        PopupList:
+        - None
+        - Sleep
+        Value: None
+  - Key: Stab+
+    Index: 3
+    ManaCost: 2
+    AbilityType: 2
+    TargetType: 3
+    TargetCount: 2
+    Pages:
+    - strength: 1
+      statusEffect:
+        PopupList:
+        - None
+        - Sleep
+        Value: None
+  - Key: Kiss
+    Index: 4
+    ManaCost: 1
+    AbilityType: 2
+    TargetType: 4
+    TargetCount: 1
+    Pages:
+    - strength: 1
+      statusEffect:
+        PopupList:
+        - None
+        - Sleep
+        Value: None
+  - Key: Identify
+    Index: 5
+    ManaCost: 2
+    AbilityType: 18
+    TargetType: 1
+    TargetCount: 1
+    Pages:
+    - strength: 0
+      statusEffect:
+        PopupList:
+        - None
+        - Sleep
+        Value: None
+  statusEffects:
+  - Key: None
+  - Key: Sleep

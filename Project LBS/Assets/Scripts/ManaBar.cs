@@ -14,15 +14,11 @@ namespace Battle
         void Start()
         {
             UpdateMana("", 0);
-            character.stats.OnManaChanged += UpdateMana;
+            character.Stats.OnManaChanged += UpdateMana;
         }
         public void UpdateMana(string type, int deltaVal)
         {
-            float val = 0;
-            if (character.stats.MP > 0)
-            {
-                val = ((float)character.stats.MP / character.maxStats.MP);
-            }
+            float val = ((float)character.Stats.MP / character.MaxStats.MP);
             if (slider)
             {
                 slider.value = val;

@@ -132,20 +132,9 @@ namespace Battle
         public int TotalHealth(Entity_Preset.EntityFaction faction)
         {
             int h = 0;
-            switch (faction)
+            foreach (var item in GetFaction(faction))
             {
-                case Entity_Preset.EntityFaction.Player:
-                    foreach (var item in players)
-                    {
-                        h += item.stats.HP;
-                    }
-                    break;
-                case Entity_Preset.EntityFaction.Enemy:
-                    foreach (var item in enemies)
-                    {
-                        h += item.stats.HP;
-                    }
-                    break;
+                h += item.Stats.HP;
             }
             return h;
         }

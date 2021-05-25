@@ -14,15 +14,11 @@ namespace Battle
         void Start()
         {
             UpdateHealth("", 0);
-            character.stats.OnHealthChanged += UpdateHealth;
+            character.Stats.OnHealthChanged += UpdateHealth;
         }
         public void UpdateHealth(string type, int deltaVal)
         {
-            float val = 0;
-            if (character.stats.HP > 0)
-            {
-                val = ((float)character.stats.HP / character.maxStats.HP);
-            }
+            float val = ((float)character.Stats.HP / character.MaxStats.HP);
             if (slider)
             {
                 slider.value = val;

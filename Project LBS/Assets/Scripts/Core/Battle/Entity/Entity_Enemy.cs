@@ -21,14 +21,14 @@ namespace Battle
             computer = BattleManager.inst.GetAI;
             BattleManager.inst.GetTurnSystem.onEnemy.Add(Think);
             BattleManager.inst.GetTurnSystem.onEnemy.Add(ShowTarget);
-            battleActions.Add(Attack);
+            battleActions.Add(EnemyAttack);
         }
 
         public void Think(out float duration)
         {
             duration = 0.4f;
             string move = computer.CalculateMove(this, out Ability_Book book);
-            if (stats.MP < book.ManaCost)
+            if (Stats.MP < book.ManaCost)
             {
                 Debug.Log(name + " Out of Mana!");
                 return;
@@ -41,7 +41,7 @@ namespace Battle
             activeBook = move;
             if (book.TargetType.HasFlag(TargetType.Random))
                 BattleManager.inst.TryGetRandoms(book.TargetCount, Entity_Preset.EntityFaction.Player, out targets);
-            stats.MP -= book.ManaCost;
+            Stats.MP -= book.ManaCost;
         }
 
         public void ShowTarget(out float duration)
@@ -53,9 +53,9 @@ namespace Battle
             }
         }
 
-        public void Attack(out float duration)
+        public void EnemyAttack(out float duration)
         {
-            duration = 0.5f;
+            duration = 0.2f;
             if (BattleManager.inst.ability_Library.Books.TryGetValue(activeBook, out Ability_Book book))
                 UseAbility(book, targets, out duration);
         }

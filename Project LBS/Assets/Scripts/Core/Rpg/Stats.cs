@@ -18,8 +18,10 @@ public class Stats
         {
             int old = health;
             health = value;
-            if (old != value){
-                OnHealthChanged.Invoke("Health", value - old);}
+            if (old != value)
+            {
+                OnHealthChanged.Invoke("Health", value - old);
+            }
         }
     }
 
@@ -139,7 +141,7 @@ public class Stats
     }
     public void StatChangeNotify(string type, int value)
     {
-        Debug.Log($"{type}: {value}");
+        //Debug.Log($"{type}: {value}");
     }
     public void Apply(Stats stats)
     {
@@ -148,8 +150,6 @@ public class Stats
     }
     public void Copy(Stats stats)
     {
-        health = stats.health;
-        mana = stats.mana;
         attack = stats.attack;
         defence = stats.defence;
         intelligence = stats.intelligence;
@@ -159,15 +159,52 @@ public class Stats
 
     public static Stats operator +(Stats a, Stats b)
     {
-        return new Stats
-            (
-            a.health + b.health,
-            a.mana + b.mana,
-            a.attack + b.attack,
-            a.defence + b.defence,
-            a.intelligence + b.intelligence,
-            a.speed + b.speed,
-            a.magicPower + b.magicPower
-            );
+        a.HP += b.health;
+        a.MP += b.mana;
+        a.Atk += b.attack;
+        a.Def += b.defence;
+        a.Int += b.intelligence;
+        a.Spd += b.speed;
+        a.Mgp += b.magicPower;
+        return a;
     }
+    public static Stats operator -(Stats a, Stats b)
+    {
+        a.HP -= b.health;
+        a.MP -= b.mana;
+        a.Atk -= b.attack;
+        a.Def -= b.defence;
+        a.Int -= b.intelligence;
+        a.Spd -= b.speed;
+        a.Mgp -= b.magicPower;
+        return a;
+    }
+    public static Stats operator *(Stats a, Stats b)
+    {
+        a.HP *= b.health;
+        a.MP *= b.mana;
+        a.Atk *= b.attack;
+        a.Def *= b.defence;
+        a.Int *= b.intelligence;
+        a.Spd *= b.speed;
+        a.Mgp *= b.magicPower;
+        return a;
+    }
+    public static Stats operator /(Stats a, Stats b)
+    {
+        a.HP /= b.health;
+        a.MP /= b.mana;
+        a.Atk /= b.attack;
+        a.Def /= b.defence;
+        a.Int /= b.intelligence;
+        a.Spd /= b.speed;
+        a.Mgp /= b.magicPower;
+        return a;
+    }
+
+    public override string ToString()
+    {
+        return $"HP:{HP} MP:{MP} Atk:{Atk} Def:{Def} Int:{Int} Spd:{Spd} Mgp:{Mgp}";
+    }
+
 }

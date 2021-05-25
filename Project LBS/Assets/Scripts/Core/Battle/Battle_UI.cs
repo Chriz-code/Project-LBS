@@ -10,16 +10,20 @@ namespace Battle
     public class Battle_UI : MonoBehaviour
     {
         [SerializeField] TextMeshProUGUI turnText = null;
-        [SerializeField] CustomButton[] abilityButtons = new CustomButton[4];
+        [SerializeField] Transform abilityButtonParent = null;
+        [SerializeField] GameObject abilityButtonPrefab = null;
+        [SerializeField] List<CustomButton> abilityButtons = new List<CustomButton>();
         [SerializeField] int buttonIndex = 0;
         [SerializeField] bool cycleButtons = false;
 
         [Header("Targeting")]
         [SerializeField] Ability_Book activeBook = null;
         [SerializeField] Entity_Player activePlayer = null;
-        [SerializeField] int enemyIndex = 0;
-        [SerializeField] bool cycleEnemies = false;
-        List<Entity_Enemy> targets = new List<Entity_Enemy>();
+        [SerializeField] int targetIndex = 0;
+        [SerializeField] bool cycleTargets = false;
+        List<Entity_Character> targets = new List<Entity_Character>();
+
+        Entity_Preset.EntityFaction targetFaction = Entity_Preset.EntityFaction.Neutral;
 
         private void Start()
         {
@@ -72,19 +76,15 @@ namespace Battle
         public void EnableAbilityButtons()
         {
             Entity_Player player = BattleManager.inst.players[BattleManager.inst.PlayerIndex];
-            for (int i = 0; i < abilityButtons.Length; i++)
+            foreach (var item in abilityButtons) Destroy(item.image.gameObject);
+            abilityButtons = new List<CustomButton>();
+            for (int i = 0; i < player.rank.books.Count; i++)//Temp
             {
-                int index = Mathf.Min(i, player.rank.books.Count - 1);
-                Ability_Book book = BattleManager.inst.ability_Library.Books[player.rank.books[index].Value];
-                string abilityName = book.Key;
-                abilityButtons[i].Interactive = (book.ManaCost <= player.stats.MP);
-                abilityButtons[i].text.text = abilityName;
-                abilityButtons[i].value = abilityName;
+                Ability_Book book = BattleManager.inst.ability_Library.Books[player.rank.books[i].Value];
+                abilityButtons.Add(new CustomButton(Instantiate(abilityButtonPrefab, abilityButtonParent), book.Key, book.ManaCost <= player.Stats.MP));
             }
-            //Last Button Always Skip
-            abilityButtons[abilityButtons.Length - 1].Interactive = true;
-            abilityButtons[abilityButtons.Length - 1].text.text = "Skip";
-            abilityButtons[abilityButtons.Length - 1].value = "Skip";
+            abilityButtons.Add(new CustomButton(Instantiate(abilityButtonPrefab, abilityButtonParent), "Skip"));
+            abilityButtons.Add(new CustomButton(Instantiate(abilityButtonPrefab, abilityButtonParent), "Defend"));
 
             abilityButtons[buttonIndex].Select();
             cycleButtons = true;
@@ -94,7 +94,7 @@ namespace Battle
             cycleButtons = false;
             foreach (var item in abilityButtons)
             {
-                item.Interactive = false;
+                item.SetInteractive(false);
             }
         }
         void CycleButtons(Vector2 val)
@@ -103,21 +103,15 @@ namespace Battle
 
             buttonIndex -= Mathf.RoundToInt(val.y);
 
-            buttonIndex = LoopValue(buttonIndex, abilityButtons.Length);
+            buttonIndex = LoopValue(buttonIndex, abilityButtons.Count);
             abilityButtons[buttonIndex].Select();
         }
         void SelectButton()
         {
-            if (abilityButtons[buttonIndex].Interactive)
+            if (abilityButtons[buttonIndex].GetInteractive)
             {
-                if (abilityButtons[buttonIndex].value == "Skip")
-                {
-                    EndPlayerTurn();
-                }
-                else
-                {
-                    SelectAbility(abilityButtons[buttonIndex].value);
-                }
+                cycleButtons = false;
+                SelectAbility(abilityButtons[buttonIndex].book.Value);
             }
         }
         public void SelectAbility(string ability)
@@ -127,9 +121,19 @@ namespace Battle
             activePlayer.SetAbility(ability);
 
             DisableAbilityButtons();
-            enemyIndex = 0;
-            cycleEnemies = true;
-            StartCoroutine(FlashEnemies());
+
+            targetIndex = 0;
+            targetFaction = activeBook.TargetType.HasFlag(TargetType.Support) ? Entity_Preset.EntityFaction.Player : Entity_Preset.EntityFaction.Enemy;
+            if (activeBook.TargetType.HasFlag(TargetType.Self))
+            {
+                activePlayer.SetTarget(activePlayer);
+                EndPlayerTurn();
+            }
+            else
+            {
+                cycleTargets = true;
+                StartCoroutine(FlashTargets());
+            }
         }
         #endregion
 
@@ -140,8 +144,8 @@ namespace Battle
             Vector2 val = ctx.ReadValue<Vector2>();
             if (cycleButtons)
                 CycleButtons(val);
-            else if (cycleEnemies)
-                CycleEnemies(val);
+            else if (cycleTargets)
+                CycleTargets(val);
 
         }
         public void OnSubmit(InputAction.CallbackContext ctx)
@@ -151,8 +155,8 @@ namespace Battle
 
             if (cycleButtons)
                 SelectButton();
-            else if (cycleEnemies)
-                SelectEnemy();
+            else if (cycleTargets)
+                SelectTarget();
         }
         int LoopValue(int a, int length)
         {
@@ -162,93 +166,75 @@ namespace Battle
         }
 
         #region Targeting
-        void CycleEnemies(Vector2 val)
+        void CycleTargets(Vector2 val)
         {
-            enemyIndex += Mathf.RoundToInt(val.x);
-            enemyIndex = LoopValue(enemyIndex, BattleManager.inst.enemies.Count);
+            targetIndex += Mathf.RoundToInt(val.x);
+            targetIndex = LoopValue(targetIndex, BattleManager.inst.GetFaction(targetFaction).Length);
         }
-        void SelectEnemy()
+        void SelectTarget()
         {
-            //Damage
-            if (!activeBook.AbilityType.HasFlag(AbilityType.Support)) //Has to change when adding support, Shit too messy
+            Debug.Log($"{activeBook.Key} : {activeBook.TargetType}");
+            if (activeBook.TargetType.HasFlag(TargetType.Random)) //If Random or All
             {
-                Debug.Log($"{activeBook.Key} : {activeBook.TargetType}");
-                if (activeBook.TargetType.HasFlag(TargetType.Random))
+                Entity_Character[] targets;
+                if (activeBook.TargetType.HasFlag(TargetType.Multi))
                 {
-                    Entity_Character[] targets;
-                    if (activeBook.TargetType.HasFlag(TargetType.Multi))
-                    {
-                        BattleManager.inst.TryGetMultiRandoms(
-                            activeBook.TargetCount,
-                            Entity_Preset.EntityFaction.Enemy,
-                            out targets);
-                    }
-                    else
-                    {
-                        BattleManager.inst.TryGetRandoms(
-                            activeBook.TargetCount,
-                            Entity_Preset.EntityFaction.Enemy,
-                            out targets);
-                    }
-                    SelectFlash(BattleManager.inst.enemies.ToArray(), Color.black);
-                    activePlayer.SetTargets(targets);
-                    EndPlayerTurn();
-                } //If Random or All
-                else if (!activeBook.TargetType.HasFlag(TargetType.Random)) //If Not Random
+                    BattleManager.inst.TryGetMultiRandoms(
+                        activeBook.TargetCount,
+                        targetFaction,
+                        out targets);
+                }
+                else
                 {
-                    Entity_Enemy target = BattleManager.inst.enemies[enemyIndex];
-                    if (activeBook.TargetType.HasFlag(TargetType.Single))
-                    {
-                        if (!targets.Contains(target))
-                        {
-                            targets.Add(target);
-                            SelectFlash(target, Color.black);
-                        }
-                        if (targets.Count >= activeBook.TargetCount || targets.Count >= BattleManager.inst.enemies.Count)
-                        {
-                            activePlayer.SetTargets(targets.ToArray());
-                            targets = new List<Entity_Enemy>();
-                            EndPlayerTurn();
-                        }
-                    }
-                    else
+                    BattleManager.inst.TryGetRandoms(
+                        activeBook.TargetCount,
+                        targetFaction,
+                        out targets);
+                }
+                activePlayer.SetTargets(targets);
+                EndPlayerTurn();
+            }
+            else
+            {
+                Entity_Enemy target = BattleManager.inst.enemies[targetIndex];
+                if (activeBook.TargetType.HasFlag(TargetType.Single))
+                {
+                    if (!targets.Contains(target))
                     {
                         targets.Add(target);
-                        SelectFlash(target, Color.black);
-                        if (targets.Count >= activeBook.TargetCount)
-                        {
-                            activePlayer.SetTargets(targets.ToArray());
-                            targets = new List<Entity_Enemy>();
-                            EndPlayerTurn();
-                        }
+                    }
+                    if (targets.Count >= activeBook.TargetCount || targets.Count >= BattleManager.inst.enemies.Count)
+                    {
+                        activePlayer.SetTargets(targets.ToArray());
+                        targets = new List<Entity_Character>();
+                        EndPlayerTurn();
+                    }
+                }
+                else
+                {
+                    targets.Add(target);
+                    if (targets.Count >= activeBook.TargetCount)
+                    {
+                        activePlayer.SetTargets(targets.ToArray());
+                        targets = new List<Entity_Character>();
+                        EndPlayerTurn();
                     }
                 }
             }
         }
 
         float flashTime = 0.1f;
-        void SelectFlash(Entity_Character target, Color col)
+        IEnumerator FlashTargets()
         {
-            target.Flash(col, flashTime);
-        }
-        void SelectFlash(Entity_Character[] targets, Color col)
-        {
-            foreach (var item in targets)
-            {
-                item.Flash(col, flashTime);
-            }
-        }
-        IEnumerator FlashEnemies()
-        {
-            while (cycleEnemies)
+            while (cycleTargets)
             {
                 if (!activeBook.TargetType.HasFlag(TargetType.Random))
                 {
-                    BattleManager.inst.enemies[enemyIndex].Flash(Color.gray, flashTime);
+                    BattleManager.inst.GetFaction(targetFaction)[targetIndex].Flash(Color.gray, flashTime);
                 }
                 else
                 {
-                    foreach (var item in BattleManager.inst.enemies)
+                    foreach (var item in BattleManager.inst.GetFaction(targetFaction))
                     {
                         item.Flash(Color.gray, flashTime);
                     }
@@ -260,10 +246,11 @@ namespace Battle
 
         void EndPlayerTurn()
         {
-            cycleEnemies = false;
+            cycleTargets = false;
             activePlayer = null;
             activeBook = null;
-            enemyIndex = 0;
+            targetIndex = 0;
+            buttonIndex = 0;
 
             if (BattleManager.inst.PlayerIndex + 1 >= BattleManager.inst.players.Count)
             {
@@ -282,31 +269,29 @@ namespace Battle
     {
         public Image image = null;
         public Text text = null;
-        public string value = "";
+        public BookReference book;
 
         public Color normalColor = Color.white;
         public Color disabledColor = Color.gray;
         public Color highlightColor = Color.cyan;
-        bool enabled = true;
-        public bool Interactive
+        [SerializeField] bool enabled = true;
+        public void SetInteractive(bool value)
         {
-            get => enabled;
-            set
+            enabled = value;
+            if (!value)
             {
-                if (value == false)
-                {
-                    image.color = disabledColor;
-                }
-                else
-                {
-                    image.color = normalColor;
-                }
-                enabled = value;
+                image.color = disabledColor;
+            }
+            else
+            {
+                image.color = normalColor;
             }
         }
+        public bool GetInteractive { get => enabled; }
+
         public void Select()
         {
-            if (Interactive)
+            if (GetInteractive)
                 image.color = highlightColor;
             else
             {
@@ -315,10 +300,19 @@ namespace Battle
         }
         public void Deselect()
         {
-            if (Interactive)
+            if (GetInteractive)
                 image.color = normalColor;
             else
                 image.color = disabledColor;
+        }
+
+        public CustomButton(GameObject g, string value, bool interactive = true)
+        {
+            image = g.GetComponent<Image>();
+            text = image.transform.GetChild(0).GetComponent<Text>();
+            text.text = value;
+            book = new BookReference(value);
+            SetInteractive(interactive);
         }
     }
 }

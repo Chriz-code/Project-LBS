@@ -16,31 +16,20 @@ namespace Battle
         }
         protected override void Start()
         {
-            BattleManager.inst.GetTurnSystem.onPassiveAfter.Add(ManaTurnHeal);
-            stats.OnHealthChanged += DamageFlash;
+            Stats.OnHealthChanged += DamageFlash;
         }
         public override void Initiate(Entity_Preset preset)
         {
             base.Initiate(preset);
             rank = preset.rank;
-            stats = new Stats(preset.stats) + rank.stats;
-            maxStats = new Stats(stats);
+            Stats = new Stats(preset.stats) + rank.stats;
+            MaxStats = new Stats(Stats);
             name = preset.name;
         }
         public override void Initiate(Entity_Preset preset, string name)
         {
             Initiate(preset);
             this.name = name;
-        }
-
-        public void ManaTurnHeal(out float duration)
-        {
-            duration = 0.1f;
-            stats.MP = Mathf.Min(stats.MP + 1, maxStats.MP);
-        }
-        public void ApplyStatusEffect(Status_Effect effect)
-        {
-
         }
 
         /// <summary>
@@ -50,7 +39,7 @@ namespace Battle
         /// <param name="targets"></param>
         protected void UseAbility(Ability_Book book, Entity_Character[] targets, out float duration)
         {
-            duration = 1f;
+            duration = 0.5f;
             Debug.Log($"{name} just used: {book.Key}!");
             foreach (var item in book.Pages)
             {
@@ -71,15 +60,34 @@ namespace Battle
                     }
                     else
                     {
-                        foreach (var target in targets)
+                        if (book.TargetType.HasFlag(TargetType.Support))
                         {
-                            target.Damage(item.strength);
+                            foreach (var target in targets)
+                            {
+                                target.Heal(item.strength*StatsMod.Int);
+                            }
+                        }
+                        else
+                        {
+                            foreach (var target in targets)
+                            {
+                                target.Damage(item.strength * StatsMod.Atk);
+                            }
+                        }
+                        if (book.AbilityType.HasFlag(AbilityType.Status))
+                        {
+                            foreach (var target in targets)
+                            {
+                                Debug.Log($"{target} got {item.statusEffect.Value}");
+                                target.Effect(BattleManager.inst.ability_Library.StatusEffects[item.statusEffect.Value]);
+                            }
                         }
                     }
                 }
             }
         }
 
+        #region ColorTempThingy
         /// <summary>
         /// Temp
         /// </summary>
@@ -99,7 +107,17 @@ namespace Battle
                 StartCoroutine(FlashColor(time));
             }
         }
-
+        public void SelectFlash(Entity_Character target, Color col)
+        {
+            target.Flash(col, 0.1f);
+        }
+        public void SelectFlash(Entity_Character[] targets, Color col)
+        {
+            foreach (var item in targets)
+            {
+                item.Flash(col, 0.1f);
+            }
+        }
         public void FlashRepeat(Color color, float time)
         {
             if (repeat == false)
@@ -151,5 +169,6 @@ namespace Battle
                 sr.color = col;
             }
         }
+        #endregion
     }
 }

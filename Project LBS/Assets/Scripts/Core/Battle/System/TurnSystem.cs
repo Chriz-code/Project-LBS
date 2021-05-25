@@ -11,6 +11,7 @@ namespace Battle
     public class TurnSystem : MonoBehaviour
     {
         public float timeScale = 1;
+        [SerializeField] string currentAction = "";
         public delegate void TurnEvent(out float duration);
         #region Turn
         public enum Turns
@@ -60,7 +61,7 @@ namespace Battle
         /// </summary>
         public List<TurnEvent> onPassiveStart = new List<TurnEvent>();
         /// <summary>
-        /// BeforePlayer, After PassiveStart
+        /// Before Player, After PassiveStart
         /// </summary>
         public List<TurnEvent> onPrePlayer = new List<TurnEvent>();
         /// <summary>
@@ -72,7 +73,7 @@ namespace Battle
         /// </summary>
         public List<TurnEvent> onEnemy = new List<TurnEvent>();
         /// <summary>
-        /// Before Playe, After Enemy
+        /// Before Play, After Enemy
         /// </summary>
         public List<TurnEvent> onPassiveBefore = new List<TurnEvent>();
         /// <summary>
@@ -93,7 +94,6 @@ namespace Battle
         public List<TurnEvent> onEnd = new List<TurnEvent>();
         #endregion
 
-
         [SerializeField] List<Entity_Character> characters;
         public void Initiate()
         {
@@ -106,7 +106,7 @@ namespace Battle
         public void SortCharacters()
         {
             //Sort
-            characters = BattleManager.inst.GetAllCharacters.OrderByDescending(o => o.stats.Spd).ToList();
+            characters = BattleManager.inst.GetAllCharacters.OrderByDescending(o => o.Stats.Spd).ToList();
         }
         public void SetAbilities()
         {
@@ -184,7 +184,9 @@ namespace Battle
             foreach (var item in events)
             {
                 item(out float duration);
+                currentAction = $"{item.Method.Name} {duration}s";
                 yield return new WaitForSeconds(duration);
+                currentAction = "";
             }
 
             //End

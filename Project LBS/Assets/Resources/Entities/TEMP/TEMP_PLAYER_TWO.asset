@@ -35,6 +35,9 @@ MonoBehaviour:
       magicPower: 1
     books:
     - PopupList:
+      - NULL
+      - Skip
+      - Defend
       - Racism
       - Racism+
       - Stab
@@ -43,6 +46,9 @@ MonoBehaviour:
       - Identify
       Value: Stab
     - PopupList:
+      - NULL
+      - Skip
+      - Defend
       - Racism
       - Racism+
       - Stab
@@ -51,6 +57,9 @@ MonoBehaviour:
       - Identify
       Value: Stab+
     - PopupList:
+      - NULL
+      - Skip
+      - Defend
       - Racism
       - Racism+
       - Stab

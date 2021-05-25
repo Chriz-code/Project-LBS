@@ -15,25 +15,32 @@ namespace Battle
         protected override void Start()
         {
             base.Start();
-            battleActions.Add(Attack);
+            battleActions.Add(PlayerAttack);
         }
-        public void Attack(out float duration)
+        public void PlayerAttack(out float duration)
         {
-            duration = 0.5f;
+            duration = 0.2f;
             if (string.IsNullOrEmpty(activeBook))
                 return;
 
             if (BattleManager.inst.ability_Library.Books.TryGetValue(activeBook, out Ability_Book book) && targets != null)
+            {
                 UseAbility(book, targets, out duration);
+            }
         }
         public void SetAbility(string ability)
         {
             activeBook = ability;
-            stats.MP -= BattleManager.inst.ability_Library.Books[ability].ManaCost;
+            Stats.MP -= BattleManager.inst.ability_Library.Books[ability].ManaCost;
         }
         public void SetTargets(Entity_Character[] targets)
         {
+            SelectFlash(targets, Color.black);
             this.targets = targets;
+        }
+        public void SetTarget(Entity_Character target)
+        {
+            this.targets = new Entity_Character[] { target };
         }
     }
 }

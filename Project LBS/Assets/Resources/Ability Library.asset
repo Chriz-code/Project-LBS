@@ -13,62 +13,85 @@ MonoBehaviour:
   m_Name: Ability Library
   m_EditorClassIdentifier: 
   books:
-  - Key: Racism
+  - Key: NULL
     Index: 0
+    ManaCost: 0
+    AbilityType: 0
+    TargetType: 0
+    TargetCount: 0
+    Pages: []
+  - Key: Skip
+    Index: 1
+    ManaCost: 0
+    AbilityType: 1
+    TargetType: 1
+    TargetCount: 0
+    Pages: []
+  - Key: Defend
+    Index: 2
+    ManaCost: 0
+    AbilityType: 3
+    TargetType: 1
+    TargetCount: 0
+    Pages:
+    - strength: 0
+      statusEffect:
+        PopupList:
+        - None
+        - Mana Restore
+        - Defence Increase
+        - Sleep
+        - Sharpen
+        - Insulted
+        Value: Mana Restore
+    - strength: 0
+      statusEffect:
+        PopupList:
+        - None
+        - Mana Restore
+        - Defence Increase
+        - Sleep
+        - Sharpen
+        - Insulted
+        Value: Defence Increase
+  - Key: Racism
+    Index: 3
     ManaCost: 1
-    AbilityType: 2
-    TargetType: 4
+    AbilityType: 3
+    TargetType: 16
     TargetCount: 1
     Pages:
     - strength: 1
       statusEffect:
         PopupList:
         - None
+        - Mana Restore
+        - Defence Increase
         - Sleep
-        Value: None
+        - Sharpen
+        - Insulted
+        Value: Insulted
   - Key: Racism+
-    Index: 1
+    Index: 4
     ManaCost: 2
-    AbilityType: 2
-    TargetType: 6
+    AbilityType: 1
+    TargetType: 24
     TargetCount: 2
     Pages:
     - strength: 1
       statusEffect:
         PopupList:
         - None
+        - Mana Restore
+        - Defence Increase
         - Sleep
+        - Sharpen
+        - Insulted
         Value: None
   - Key: Stab
-    Index: 2
+    Index: 5
     ManaCost: 1
-    AbilityType: 2
-    TargetType: 1
-    TargetCount: 1
-    Pages:
-    - strength: 1
-      statusEffect:
-        PopupList:
-        - None
-        - Sleep
-        Value: None
-  - Key: Stab+
-    Index: 3
-    ManaCost: 2
-    AbilityType: 2
-    TargetType: 3
-    TargetCount: 2
-    Pages:
-    - strength: 1
-      statusEffect:
-        PopupList:
-        - None
-        - Sleep
-        Value: None
-  - Key: Kiss
-    Index: 4
-    ManaCost: 1
-    AbilityType: 2
+    AbilityType: 1
     TargetType: 4
     TargetCount: 1
     Pages:
@@ -76,12 +99,50 @@ MonoBehaviour:
       statusEffect:
         PopupList:
         - None
+        - Mana Restore
+        - Defence Increase
         - Sleep
+        - Sharpen
+        - Insulted
+        Value: None
+  - Key: Stab+
+    Index: 6
+    ManaCost: 2
+    AbilityType: 1
+    TargetType: 12
+    TargetCount: 2
+    Pages:
+    - strength: 1
+      statusEffect:
+        PopupList:
+        - None
+        - Mana Restore
+        - Defence Increase
+        - Sleep
+        - Sharpen
+        - Insulted
+        Value: None
+  - Key: Kiss
+    Index: 7
+    ManaCost: 1
+    AbilityType: 1
+    TargetType: 16
+    TargetCount: 1
+    Pages:
+    - strength: 1
+      statusEffect:
+        PopupList:
+        - None
+        - Mana Restore
+        - Defence Increase
+        - Sleep
+        - Sharpen
+        - Insulted
         Value: None
   - Key: Identify
-    Index: 5
+    Index: 8
     ManaCost: 2
-    AbilityType: 18
+    AbilityType: 9
     TargetType: 1
     TargetCount: 1
     Pages:
@@ -89,8 +150,82 @@ MonoBehaviour:
       statusEffect:
         PopupList:
         - None
+        - Mana Restore
+        - Defence Increase
         - Sleep
+        - Sharpen
+        - Insulted
         Value: None
   statusEffects:
   - Key: None
+    Value:
+      turnsOfEffect: 0
+      statusType: 1
+      statChange:
+        health: 0
+        mana: 0
+        attack: 0
+        defence: 0
+        intelligence: 0
+        speed: 0
+        magicPower: 0
+  - Key: Mana Restore
+    Value:
+      turnsOfEffect: 2
+      statusType: 0
+      statChange:
+        health: 0
+        mana: 1
+        attack: 0
+        defence: 0
+        intelligence: 0
+        speed: 0
+        magicPower: 0
+  - Key: Defence Increase
+    Value:
+      turnsOfEffect: 1
+      statusType: -1
+      statChange:
+        health: 0
+        mana: 0
+        attack: 0
+        defence: 0
+        intelligence: 0
+        speed: 0
+        magicPower: 0
   - Key: Sleep
+    Value:
+      turnsOfEffect: 0
+      statusType: 1
+      statChange:
+        health: 0
+        mana: 0
+        attack: 0
+        defence: 0
+        intelligence: 0
+        speed: 0
+        magicPower: 0
+  - Key: Sharpen
+    Value:
+      turnsOfEffect: 2
+      statusType: 0
+      statChange:
+        health: 0
+        mana: 0
+        attack: 10
+        defence: 0
+        intelligence: 0
+        speed: 0
+        magicPower: 0
+  - Key: Insulted
+    Value:
+      turnsOfEffect: 2
+      statusType: -1
+      statChange:
+        health: 0
+        mana: 0
+        attack: -10
+        defence: 0
+        intelligence: 0
+        speed: 0
+        magicPower: 0

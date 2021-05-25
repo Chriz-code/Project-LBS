@@ -6,11 +6,10 @@ using UnityEngine;
 public enum AbilityType
 {
     None = 0,
-    Passive = 1,
-    Active = 2,
-    Support = 4,
-    Reactive = 8,
-    Unique = 16,
+    Active = 1,
+    Status = 2,
+    Reactive = 4,
+    Unique = 8,
     Everything = ~0,
 }
 
@@ -18,9 +17,11 @@ public enum AbilityType
 public enum TargetType
 {
     None = 0,
-    Single = 1,
-    Multi = 2,
-    Random = 4,
+    Self = 1,
+    Support = 2,
+    Single = 4,
+    Multi = 8,
+    Random = 16,
     All = ~0,
 }
 
@@ -73,6 +74,11 @@ public class BookReference : ISerializationCallbackReceiver
         TMPList = PopupList;
         if (Value == string.Empty)
             Value = PopupList[0];
+    }
+
+    public BookReference(string value)
+    {
+        Value = value;
     }
 }
 

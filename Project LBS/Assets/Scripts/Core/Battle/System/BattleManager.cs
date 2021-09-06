@@ -26,8 +26,11 @@ namespace Battle
             set
             {
                 playerIndex = value % players.Count;
+                if (value == players.Count)
+                    EndTurn();
             }
         }
+
         public List<Entity_Player> players = new List<Entity_Player>();
 
         public List<Entity_Enemy> enemies = new List<Entity_Enemy>();
@@ -36,6 +39,7 @@ namespace Battle
         public bool autoPlay = false;
 
         #region Access Methods
+        public Entity_Player IndexPlayer { get => players[PlayerIndex]; }
         public List<Entity_Character> GetAllCharacters
         {
             get
@@ -138,6 +142,10 @@ namespace Battle
             }
             return h;
         }
+        public bool UsableBook(Entity_Player p, BookReference book)
+        {
+            return p.Stats.MP >= ability_Library.Books[book.Value].ManaCost;
+        }
         #endregion
 
         private void Awake()
@@ -166,7 +174,7 @@ namespace Battle
             }
             foreach (var item in battleValues.additionalEnemies)
             {
-                Vector2 pos = Vector2.right * (5 + enemies.Count*2) + ((enemies.Count % 2 == 0) ? Vector2.up : Vector2.down);
+                Vector2 pos = Vector2.right * (5 + enemies.Count * 2) + ((enemies.Count % 2 == 0) ? Vector2.up : Vector2.down);
                 if (Instantiate(enemyPrefab, pos, Quaternion.identity, null).TryGetComponent(out Entity_Enemy enemy))
                 {
                     enemy.Initiate(item, $"{item.name}:{enemies.Count}");
@@ -180,7 +188,7 @@ namespace Battle
             switch (template)
             {
                 case BattleTemplate.Test:
-                    Vector2 pos = Vector2.right * (5 + enemies.Count*2) + ((enemies.Count % 2 == 0) ? Vector2.up : Vector2.down);
+                    Vector2 pos = Vector2.right * (5 + enemies.Count * 2) + ((enemies.Count % 2 == 0) ? Vector2.up : Vector2.down);
                     if (Instantiate(enemyPrefab, pos, Quaternion.identity, null).TryGetComponent(out Entity_Enemy enemy))
                     {
                         enemy.Initiate(battleValues.additionalEnemies[0], $"{battleValues.additionalEnemies[0].name}:{enemies.Count}");
@@ -196,7 +204,7 @@ namespace Battle
         {
             foreach (var item in gameValues.playerCharacters)
             {
-                Vector2 pos = Vector2.left * (5 + players.Count*2) + ((players.Count % 2 == 0) ? Vector2.up : Vector2.down);
+                Vector2 pos = Vector2.left * (5 + players.Count * 2) + ((players.Count % 2 == 0) ? Vector2.up : Vector2.down);
                 if (Instantiate(playerPrefab, pos, Quaternion.identity, null).TryGetComponent(out Entity_Player player))
                 {
                     player.Initiate(item, $"{item.name}:{players.Count}");
@@ -220,7 +228,7 @@ namespace Battle
         }
         public void SkipTurn()
         {
-            players[PlayerIndex].SetAbility(string.Empty);
+            players[PlayerIndex].SetAbility(null);
             if (PlayerIndex >= players.Count - 1)
                 EndTurn();
             PlayerIndex++;
@@ -249,7 +257,7 @@ namespace Battle
 
             foreach (var item in players)
             {
-                item.activeBook = item.rank.books[0].Value;
+                item.activeBook = ability_Library.Books[item.rank.books[0].Value];
             }
             EndTurn();
         }

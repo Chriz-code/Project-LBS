@@ -6,7 +6,7 @@ namespace Battle
 {
     public class Entity_Player : Entity_Character
     {
-        public string activeBook = string.Empty;
+        public Ability_Book activeBook = null;
         Entity_Character[] targets;
         protected override void Awake()
         {
@@ -20,23 +20,23 @@ namespace Battle
         public void PlayerAttack(out float duration)
         {
             duration = 0.2f;
-            if (string.IsNullOrEmpty(activeBook))
+            if (activeBook == null)
                 return;
 
-            if (BattleManager.inst.ability_Library.Books.TryGetValue(activeBook, out Ability_Book book) && targets != null)
+            if (targets != null)
             {
-                UseAbility(book, targets, out duration);
+                UseAbility(activeBook, targets, out duration);
             }
         }
-        public void SetAbility(string ability)
+        public void SetAbility(Ability_Book book)
         {
-            activeBook = ability;
-            Stats.MP -= BattleManager.inst.ability_Library.Books[ability].ManaCost;
+            activeBook = book;
         }
         public void SetTargets(Entity_Character[] targets)
         {
             SelectFlash(targets, Color.black);
             this.targets = targets;
+            Stats.MP -= activeBook.ManaCost;
         }
         public void SetTarget(Entity_Character target)
         {

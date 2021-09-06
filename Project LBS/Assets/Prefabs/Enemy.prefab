@@ -59,7 +59,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &3615948211196832103
 MonoBehaviour:
@@ -350,7 +350,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   preset: {fileID: 0}
-  maxStats:
+  statModifiers: []
+  Stats:
     health: 0
     mana: 0
     attack: 0
@@ -358,7 +359,7 @@ MonoBehaviour:
     intelligence: 0
     speed: 0
     magicPower: 0
-  stats:
+  statsMod:
     health: 0
     mana: 0
     attack: 0

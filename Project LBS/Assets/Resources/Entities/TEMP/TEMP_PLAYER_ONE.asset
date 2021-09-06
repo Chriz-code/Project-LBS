@@ -17,7 +17,7 @@ MonoBehaviour:
   level: 1
   stats:
     health: 10
-    mana: 1
+    mana: 0
     attack: 1
     defence: 1
     intelligence: 1
@@ -35,16 +35,68 @@ MonoBehaviour:
       magicPower: 1
     books:
     - PopupList:
+      - NULL
+      - Skip
+      - Defend
       - Racism
       - Racism+
       - Stab
       - Stab+
       - Kiss
+      - Identify
       Value: Racism
     - PopupList:
+      - NULL
+      - Skip
+      - Defend
       - Racism
       - Racism+
       - Stab
       - Stab+
       - Kiss
+      - Identify
       Value: Racism+
+    - PopupList:
+      - NULL
+      - Skip
+      - Defend
+      - Racism
+      - Racism+
+      - Stab
+      - Stab+
+      - Kiss
+      - Identify
+      Value: Kiss
+    - PopupList:
+      - NULL
+      - Skip
+      - Defend
+      - Racism
+      - Racism+
+      - Stab
+      - Stab+
+      - Kiss
+      - Identify
+      Value: Stab
+    - PopupList:
+      - NULL
+      - Skip
+      - Defend
+      - Racism
+      - Racism+
+      - Stab
+      - Stab+
+      - Kiss
+      - Identify
+      Value: Stab+
+    - PopupList:
+      - NULL
+      - Skip
+      - Defend
+      - Racism
+      - Racism+
+      - Stab
+      - Stab+
+      - Kiss
+      - Identify
+      Value: Identify

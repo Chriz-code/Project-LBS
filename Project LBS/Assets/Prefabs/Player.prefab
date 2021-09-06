@@ -235,7 +235,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   preset: {fileID: 0}
-  maxStats:
+  statModifiers: []
+  Stats:
     health: 0
     mana: 0
     attack: 0
@@ -243,7 +244,7 @@ MonoBehaviour:
     intelligence: 0
     speed: 0
     magicPower: 0
-  stats:
+  statsMod:
     health: 0
     mana: 0
     attack: 0
@@ -262,7 +263,24 @@ MonoBehaviour:
       speed: 1
       magicPower: 1
     books: []
-  activeBook: 
+  activeBook:
+    Key: 
+    Index: 0
+    ManaCost: 1
+    AbilityType: 0
+    TargetType: 4
+    TargetCount: 1
+    Pages:
+    - strength: 1
+      statusEffect:
+        PopupList:
+        - None
+        - Mana Restore
+        - Defence Increase
+        - Sleep
+        - Sharpen
+        - Insulted
+        Value: None
 --- !u!1 &3986892129141796787
 GameObject:
   m_ObjectHideFlags: 0
@@ -322,7 +340,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &832935190937094714
 MonoBehaviour:
@@ -438,7 +456,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &6692112736595386260
 MonoBehaviour:

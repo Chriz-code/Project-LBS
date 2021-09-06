@@ -81,12 +81,12 @@ namespace Battle
             for (int i = 0; i < player.rank.books.Count; i++)//Temp
             {
                 Ability_Book book = BattleManager.inst.ability_Library.Books[player.rank.books[i].Value];
-                abilityButtons.Add(new CustomButton(Instantiate(abilityButtonPrefab, abilityButtonParent), book.Key, book.ManaCost <= player.Stats.MP));
+                //abilityButtons.Add(new CustomButton(Instantiate(abilityButtonPrefab, abilityButtonParent), book.Key, book.ManaCost <= player.Stats.MP));
             }
-            abilityButtons.Add(new CustomButton(Instantiate(abilityButtonPrefab, abilityButtonParent), "Skip"));
-            abilityButtons.Add(new CustomButton(Instantiate(abilityButtonPrefab, abilityButtonParent), "Defend"));
+            //abilityButtons.Add(new CustomButton(Instantiate(abilityButtonPrefab, abilityButtonParent), "Skip"));
+            //abilityButtons.Add(new CustomButton(Instantiate(abilityButtonPrefab, abilityButtonParent), "Defend"));
 
-            abilityButtons[buttonIndex].Select();
+            //abilityButtons[0].Select();
             cycleButtons = true;
         }
         public void DisableAbilityButtons()
@@ -99,7 +99,7 @@ namespace Battle
         }
         void CycleButtons(Vector2 val)
         {
-            abilityButtons[buttonIndex].Deselect();
+            abilityButtons[buttonIndex].DeSelect();
 
             buttonIndex -= Mathf.RoundToInt(val.y);
 
@@ -118,7 +118,7 @@ namespace Battle
         {
             activePlayer = BattleManager.inst.players[BattleManager.inst.PlayerIndex];
             activeBook = BattleManager.inst.ability_Library.Books[ability];
-            activePlayer.SetAbility(ability);
+            activePlayer.SetAbility(activeBook);
 
             DisableAbilityButtons();
 
@@ -262,57 +262,6 @@ namespace Battle
                 BattleManager.inst.PlayerIndex++;
                 EnableAbilityButtons();
             }
-        }
-    }
-    [System.Serializable]
-    public class CustomButton
-    {
-        public Image image = null;
-        public Text text = null;
-        public BookReference book;
-
-        public Color normalColor = Color.white;
-        public Color disabledColor = Color.gray;
-        public Color highlightColor = Color.cyan;
-        [SerializeField] bool enabled = true;
-        public void SetInteractive(bool value)
-        {
-            enabled = value;
-            if (!value)
-            {
-                image.color = disabledColor;
-            }
-            else
-            {
-                image.color = normalColor;
-            }
-        }
-        public bool GetInteractive { get => enabled; }
-
-        public void Select()
-        {
-            if (GetInteractive)
-                image.color = highlightColor;
-            else
-            {
-                image.color = highlightColor * disabledColor;
-            }
-        }
-        public void Deselect()
-        {
-            if (GetInteractive)
-                image.color = normalColor;
-            else
-                image.color = disabledColor;
-        }
-
-        public CustomButton(GameObject g, string value, bool interactive = true)
-        {
-            image = g.GetComponent<Image>();
-            text = image.transform.GetChild(0).GetComponent<Text>();
-            text.text = value;
-            book = new BookReference(value);
-            SetInteractive(interactive);
         }
     }
 }

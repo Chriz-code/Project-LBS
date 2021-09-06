@@ -74,7 +74,7 @@ MonoBehaviour:
   - Key: Racism+
     Index: 4
     ManaCost: 2
-    AbilityType: 1
+    AbilityType: 3
     TargetType: 24
     TargetCount: 2
     Pages:
@@ -87,7 +87,7 @@ MonoBehaviour:
         - Sleep
         - Sharpen
         - Insulted
-        Value: None
+        Value: Insulted
   - Key: Stab
     Index: 5
     ManaCost: 1
@@ -189,7 +189,7 @@ MonoBehaviour:
         health: 0
         mana: 0
         attack: 0
-        defence: 0
+        defence: 5
         intelligence: 0
         speed: 0
         magicPower: 0
@@ -225,7 +225,7 @@ MonoBehaviour:
         health: 0
         mana: 0
         attack: -10
-        defence: 0
+        defence: -5
         intelligence: 0
         speed: 0
         magicPower: 0
